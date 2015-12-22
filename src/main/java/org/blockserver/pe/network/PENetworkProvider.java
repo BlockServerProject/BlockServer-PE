@@ -6,8 +6,8 @@ import net.beaconpe.jraklib.server.JRakLibServer;
 import net.beaconpe.jraklib.server.ServerHandler;
 import net.beaconpe.jraklib.server.ServerInstance;
 import org.blockserver.core.Server;
-import org.blockserver.core.module.modules.network.NetworkProvider;
-import org.blockserver.core.module.modules.network.RawPacket;
+import org.blockserver.core.modules.network.NetworkProvider;
+import org.blockserver.core.modules.network.RawPacket;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;

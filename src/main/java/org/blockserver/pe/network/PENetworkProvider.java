@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PENetworkProvider extends NetworkProvider implements ServerInstance{
     private JRakLibServer rakLibServer;
+    private String broadcastName;
     private ServerHandler handler;
 
     private Map<String, String> identifiers = new ConcurrentHashMap<>();
@@ -32,11 +33,20 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
     public void onEnable() {
         rakLibServer = new JRakLibServer(null, 19132, "0.0.0.0");
         handler = new ServerHandler(rakLibServer, this);
+        handler.sendOption("name", "MCPE;"+broadcastName+";34;0.13.1;0;0");
     }
 
     @Override
     public void onDisable() {
         handler.shutdown();
+    }
+
+    public void setBroadcastName(String name) {
+        if(isEnabled()) {
+            handler.sendOption("name", "MCPE;"+name+";34;0.13.1;0;0");
+        } else {
+            broadcastName = name;
+        }
     }
 
     @Override

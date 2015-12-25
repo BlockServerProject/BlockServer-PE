@@ -16,14 +16,29 @@
  */
 package org.blockserver.pe;
 
+import lombok.Getter;
 import org.blockserver.core.Server;
 import org.blockserver.core.module.Module;
+import org.blockserver.core.modules.logging.LoggingModule;
+import org.blockserver.pe.network.PENetworkProvider;
 
 /**
  * Global Module for Minecraft PE
  */
 public class PEModule extends Module {
+
+    @Getter private PENetworkProvider network;
+
     public PEModule(Server server) {
         super(server);
+        network = new PENetworkProvider(server);
+
+        server.addModuleToEnable(network);
+    }
+
+    @Override
+    public void onEnable() {
+        network.setBroadcastName("BlockServer MCPE Default");
+        getServer().getModule(LoggingModule.class).info("PEModule enabled!");
     }
 }

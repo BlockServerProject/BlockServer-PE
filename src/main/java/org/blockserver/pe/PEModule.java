@@ -20,6 +20,7 @@ import lombok.Getter;
 import org.blockserver.core.Server;
 import org.blockserver.core.module.Module;
 import org.blockserver.core.modules.logging.LoggingModule;
+import org.blockserver.pe.network.PENetworkConverter;
 import org.blockserver.pe.network.PENetworkProvider;
 
 /**
@@ -31,7 +32,7 @@ public class PEModule extends Module {
 
     public PEModule(Server server) {
         super(server);
-        network = new PENetworkProvider(server);
+        network = new PENetworkProvider(server, new PENetworkConverter());
 
         server.addModuleToEnable(network);
     }

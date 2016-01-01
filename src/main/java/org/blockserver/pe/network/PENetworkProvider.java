@@ -44,6 +44,9 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
     private String broadcastName;
     private ServerHandler handler;
 
+    private boolean runHandleThread = false;
+    private Thread handlingThread;
+
     private Map<String, String> identifiers = new ConcurrentHashMap<>();
 
     public PENetworkProvider(Server server, NetworkConverter converter) {
@@ -55,6 +58,18 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
         rakLibServer = new JRakLibServer(new JRakLibLogger(getServer().getModule(LoggingModule.class)), 19132, "0.0.0.0");
         handler = new ServerHandler(rakLibServer, this);
         handler.sendOption("name", "MCPE;"+broadcastName+";"+NetworkInfo.CURRENT_PROTOCOL+";"+NetworkInfo.CURRENT_VERSION+";0;0"); //TODO: Player count
+
+        handlingThread = new Thread(() -> {
+            Thread.currentThread().setName("PENetworkProcessor");
+            while(runHandleThread) {
+               handler.handlePacket();
+               if(!getPacketOutQueue().isEmpty()) {
+                   sendPacket(getPacketOutQueue().remove());
+               }
+            }
+        });
+        runHandleThread = true;
+        handlingThread.start();
         getServer().getModule(LoggingModule.class).info("Minecraft: PE Server started on 0.0.0.0:19132.");
     }
 
@@ -84,12 +99,12 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
-        //TODO: create player
+        sessionOpened(identifierToSocketAddress(identifier));
     }
 
     @Override
     public void closeSession(String identifier, String reason) {
-        //TODO: remove player
+        //sessionClosed(identifierToSocketAddress(identifier));
     }
 
     @Override

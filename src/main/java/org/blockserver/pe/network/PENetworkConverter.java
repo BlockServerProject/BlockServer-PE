@@ -16,11 +16,12 @@
  */
 package org.blockserver.pe.network;
 
-import org.blockserver.core.message.Message;
-import org.blockserver.core.message.MessageInPlayerLogin;
+import org.blockserver.core.modules.message.Message;
+import org.blockserver.core.modules.message.MessageInPlayerLogin;
 import org.blockserver.core.modules.network.BinaryBuffer;
 import org.blockserver.core.modules.network.NetworkConverter;
 import org.blockserver.core.modules.network.RawPacket;
+import org.blockserver.core.modules.player.Player;
 
 import static org.blockserver.pe.network.NetworkInfo.*;
 
@@ -34,10 +35,6 @@ import java.util.stream.Collectors;
  * Converter for Minecraft: PE
  */
 public class PENetworkConverter implements NetworkConverter {
-    @Override
-    public Collection<RawPacket> toPackets(Collection<Message> collection) {
-        return collection.stream().map(this::toPacket).collect(Collectors.toList());
-    }
 
     @Override
     public RawPacket toPacket(Message message) {
@@ -45,18 +42,13 @@ public class PENetworkConverter implements NetworkConverter {
     }
 
     @Override
-    public Collection<Message> toMessages(Collection<RawPacket> collection) {
-        return collection.stream().map(this::toMessage).collect(Collectors.toList());
-    }
-
-    @Override
-    public Message toMessage(RawPacket rawPacket) {
+    public Message toMessage(RawPacket rawPacket, Player player) {
         BinaryBuffer bb = rawPacket.getBuffer();
         bb.setPosition(0);
         byte pid = bb.getByte();
         switch (pid) {
             case LOGIN_PACKET:
-                return new MessageInPlayerLogin((InetSocketAddress) rawPacket.getAddress()); //TODO: add info + decode
+                return new MessageInPlayerLogin(player); //TODO: add info + decode
 
             default:
                 return null;

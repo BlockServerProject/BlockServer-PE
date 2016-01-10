@@ -64,7 +64,10 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
             while(runHandleThread) {
                handler.handlePacket();
                if(!getPacketOutQueue().isEmpty()) {
-                   sendPacket(getPacketOutQueue().remove());
+                   for(RawPacket packet : getPacketOutQueue()) {
+                       sendPacket(packet);
+                       break;
+                   }
                }
             }
         });
@@ -99,7 +102,7 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
-        sessionOpened(identifierToSocketAddress(identifier));
+        //sessionOpened(identifierToSocketAddress(identifier));
     }
 
     @Override

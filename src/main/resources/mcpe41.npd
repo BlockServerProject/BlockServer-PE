@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol
+    xmlns="http://jython234.github.io/JPacketLib"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jython234.github.io/JPacketLib https://raw.githubusercontent.com/jython234/JPacketLib/master/npd.xsd"
+
+    name="MinecraftPEProtocol"
+    version="41">
+
+    <packet name="LOGIN_PACKET">
+        <pid>8F</pid>
+        <field name="username" type="str"/>
+        <field name="protocol1" type="int32"/>
+        <field name="protocol2" type="int32"/>
+        <field name="clientId" type="int64"/>
+        <field name="clientUUID" type="bytes" length="16"/>
+        <field name="serverAddress" type="str"/>
+        <field name="clientSecret" type="str"/>
+        <field name="skinName" type="str"/>
+        <field name="skin" type="str"/>
+    </packet>
+
+    <packet name="PLAY_STATUS_PACKET">
+        <pid>90</pid>
+        <field name="status" type="int32"/>
+    </packet>
+    
+    <packet name="DISCONNECT_PACKET">
+        <pid>91</pid>
+        <field name="message" type="str"/>
+    </packet>
+    
+    <packet name="BATCH_PACKET">
+        <pid>92</pid>
+        <!--<field name="payloadLength" type="int32"/> TODO: Implement this
+        <field name="payload" type="bytes" getLength="payloadLength"/> -->
+    </packet>
+    
+    <packet name="TEXT_PACKET">
+        <pid>93</pid>
+        <!-- TODO: Conditional fields -->
+    </packet>
+    
+    <packet name="SET_TIME_PACKET">
+        <pid>94</pid>
+        <field name="time" type="int32"/>
+        <field name="started" type="bool"/>
+    </packet>
+
+    <packet name="StartGamePacket">
+        <pid>95</pid>
+        <field name="seed" type="int32"/>
+        <field name="dimension" type="byte"/>
+        <field name="generator" type="int32"/>
+        <field name="gamemode" type="int32"/>
+        <field name="entityId" type="int64"/>
+        <field name="spawnX" type="int32"/>
+        <field name="spawnY" type="int32"/>
+        <field name="spawnZ" type="int32"/>
+        <field name="x" type="float"/>
+        <field name="y" type="float"/>
+        <field name="z" type="float"/>
+        <field name="unknown1" type="byte"/> <!-- 0 -->
+    </packet>
+</protocol>

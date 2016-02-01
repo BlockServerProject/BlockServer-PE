@@ -17,19 +17,12 @@
 package org.blockserver.pe.network;
 
 import org.blockserver.core.modules.message.Message;
-import org.blockserver.core.modules.message.MessageInPlayerLogin;
+import org.blockserver.core.modules.message.PlayerLoginMessage;
 import org.blockserver.core.modules.network.BinaryBuffer;
 import org.blockserver.core.modules.network.NetworkConverter;
 import org.blockserver.core.modules.network.RawPacket;
-import org.blockserver.core.modules.player.Player;
 
 import static org.blockserver.pe.network.NetworkInfo.*;
-
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * Converter for Minecraft: PE
@@ -42,14 +35,13 @@ public class PENetworkConverter implements NetworkConverter {
     }
 
     @Override
-    public Message toMessage(RawPacket rawPacket, Player player) {
+    public Message toMessage(RawPacket rawPacket) {
         BinaryBuffer bb = rawPacket.getBuffer();
         bb.setPosition(0);
         byte pid = bb.getByte();
         switch (pid) {
             case LOGIN_PACKET:
-                return new MessageInPlayerLogin(player); //TODO: add info + decode
-
+                //return new PlayerLoginMessage(player); //TODO: GET PLAYER
             default:
                 return null;
         }

@@ -17,22 +17,23 @@
 package org.blockserver.pe;
 
 import lombok.Getter;
+import lombok.extern.java.Log;
 import org.blockserver.core.Server;
-import org.blockserver.core.module.Module;
+import org.blockserver.core.module.ServerModule;
 import org.blockserver.core.modules.logging.LoggingModule;
-import org.blockserver.pe.network.PENetworkConverter;
+import org.blockserver.core.modules.network.NetworkHandlerModule;
 import org.blockserver.pe.network.PENetworkProvider;
 
 /**
  * Global Module for Minecraft PE
  */
-public class PEModule extends Module {
+public class PEModule extends ServerModule {
 
     @Getter private PENetworkProvider network;
 
     public PEModule(Server server) {
         super(server);
-        network = new PENetworkProvider(server, new PENetworkConverter());
+        network = new PENetworkProvider(server.getModule(NetworkHandlerModule.class), server);
 
         server.addModuleToEnable(network);
     }

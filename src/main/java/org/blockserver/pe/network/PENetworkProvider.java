@@ -24,10 +24,7 @@ import net.beaconpe.jraklib.server.ServerHandler;
 import net.beaconpe.jraklib.server.ServerInstance;
 import org.blockserver.core.Server;
 import org.blockserver.core.modules.logging.LoggingModule;
-import org.blockserver.core.modules.network.BinaryBuffer;
-import org.blockserver.core.modules.network.NetworkConverter;
-import org.blockserver.core.modules.network.NetworkProvider;
-import org.blockserver.core.modules.network.RawPacket;
+import org.blockserver.core.modules.network.*;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -39,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * NetworkProvider implementation for JRakLib.
  */
-public class PENetworkProvider extends NetworkProvider implements ServerInstance{
+public class PENetworkProvider extends NetworkProvider implements ServerInstance, Dispatcher {
     private JRakLibServer rakLibServer;
     private String broadcastName;
     private ServerHandler handler;
@@ -49,8 +46,9 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     private Map<String, String> identifiers = new ConcurrentHashMap<>();
 
-    public PENetworkProvider(Server server, NetworkConverter converter) {
-        super(server, converter);
+    public PENetworkProvider(NetworkHandlerModule handler, Server server) {
+        super(handler, server);
+        System.out.println(handler);
     }
 
     @Override
@@ -63,21 +61,17 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
             Thread.currentThread().setName("PENetworkProcessor");
             while(runHandleThread) {
                handler.handlePacket();
-               if(!getPacketOutQueue().isEmpty()) {
-                   for(RawPacket packet : getPacketOutQueue()) {
-                       sendPacket(packet);
-                       break;
-                   }
-               }
             }
         });
         runHandleThread = true;
         handlingThread.start();
+        getServer().getModule(NetworkHandlerModule.class).registerDispatcher(this);
         getServer().getModule(LoggingModule.class).info("Minecraft: PE Server started on 0.0.0.0:19132.");
     }
 
     @Override
     public void onDisable() {
+        getServer().getModule(NetworkHandlerModule.class).unregisterDispatcher(this);
         handler.shutdown();
     }
 
@@ -87,17 +81,6 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
         } else {
             broadcastName = name;
         }
-    }
-
-    public void sendPacket(RawPacket rawPacket) {
-        EncapsulatedPacket packet = new EncapsulatedPacket();
-        packet.reliability = 2;
-        packet.messageIndex = 0;
-        packet.buffer = rawPacket.getBuffer().toArray();
-        if(!identifiers.containsKey(rawPacket.getAddress().toString())) {
-            identifiers.put(rawPacket.getAddress().toString(), socketAddressToIdentifier(rawPacket.getAddress()));
-        }
-        handler.sendEncapsulated(identifiers.get(rawPacket.getAddress().toString()), packet, (byte) (0 | JRakLib.PRIORITY_NORMAL));
     }
 
     @Override
@@ -112,7 +95,8 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     @Override
     public void handleEncapsulated(String identifier, EncapsulatedPacket packet, int flags) {
-        queueInboundPackets(new RawPacket(BinaryBuffer.wrapBytes(packet.buffer, ByteOrder.BIG_ENDIAN), identifierToSocketAddress(identifier)));
+        System.out.println("Have packet: "+String.format("%02X", packet.buffer[0]));
+        provide(new RawPacket(BinaryBuffer.wrapBytes(packet.buffer, ByteOrder.BIG_ENDIAN), identifierToSocketAddress(identifier)));
     }
 
     @Override
@@ -133,6 +117,18 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
     @Override
     public void handleOption(String option, String value) {
 
+    }
+
+    @Override
+    public void dispatch(RawPacket rawPacket) {
+        EncapsulatedPacket packet = new EncapsulatedPacket();
+        packet.reliability = 2;
+        packet.messageIndex = 0;
+        packet.buffer = rawPacket.getBuffer().toArray();
+        if(!identifiers.containsKey(rawPacket.getAddress().toString())) {
+            identifiers.put(rawPacket.getAddress().toString(), socketAddressToIdentifier(rawPacket.getAddress()));
+        }
+        handler.sendEncapsulated(identifiers.get(rawPacket.getAddress().toString()), packet, (byte) (0 | JRakLib.PRIORITY_NORMAL));
     }
 
     public static String socketAddressToIdentifier(SocketAddress address) {

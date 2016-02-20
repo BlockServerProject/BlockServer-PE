@@ -39,7 +39,7 @@ public class PEModule extends ServerModule {
     }
 
     @Override
-    public void onEnable() {
+    protected void onEnable() {
         network.setBroadcastName("BlockServer MCPE Default");
         getServer().getModule(LoggingModule.class).info("PEModule enabled!");
     }

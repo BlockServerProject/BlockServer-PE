@@ -16,6 +16,7 @@
  */
 package org.blockserver.pe.network;
 
+import lombok.Getter;
 import net.beaconpe.jraklib.JRakLib;
 import net.beaconpe.jraklib.Logger;
 import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PENetworkProvider extends NetworkProvider implements ServerInstance, Dispatcher {
     private JRakLibServer rakLibServer;
-    private String broadcastName;
+    @Getter private String broadcastName = "Default";
     private ServerHandler handler;
 
     private boolean runHandleThread = false;
@@ -60,7 +61,7 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
         handlingThread = new Thread(() -> {
             Thread.currentThread().setName("PENetworkProcessor");
             while(runHandleThread) {
-               handler.handlePacket();
+                handler.handlePacket();
             }
         });
         runHandleThread = true;

@@ -30,6 +30,7 @@ import org.blockserver.core.modules.network.*;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,7 +79,7 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     public void setBroadcastName(String name) {
         if(isEnabled()) {
-            handler.sendOption("name", "MCPE;"+name+";34;0.13.1;0;0");
+            handler.sendOption("name", "MCPE;"+name+";"+NetworkInfo.CURRENT_PROTOCOL+";"+NetworkInfo.CURRENT_VERSION+";0;0");
         } else {
             broadcastName = name;
         }
@@ -86,7 +87,7 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
-        //sessionOpened(identifierToSocketAddress(identifier));
+        System.out.println("A New session has opened.");
     }
 
     @Override
@@ -96,8 +97,9 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     @Override
     public void handleEncapsulated(String identifier, EncapsulatedPacket packet, int flags) {
-        System.out.println("Have packet: "+String.format("%02X", packet.buffer[0]));
-        provide(new RawPacket(BinaryBuffer.wrapBytes(packet.buffer, ByteOrder.BIG_ENDIAN), identifierToSocketAddress(identifier)));
+        RawPacket pk = new RawPacket(BinaryBuffer.wrapBytes(Arrays.copyOfRange(packet.buffer, 1, packet.buffer.length), ByteOrder.BIG_ENDIAN), identifierToSocketAddress(identifier));
+        System.out.println("PACKET IN: "+pk.getBuffer().singleLineHexDump());
+        provide(pk);
     }
 
     @Override
@@ -125,7 +127,11 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
         EncapsulatedPacket packet = new EncapsulatedPacket();
         packet.reliability = 2;
         packet.messageIndex = 0;
-        packet.buffer = rawPacket.getBuffer().toArray();
+        BinaryBuffer bb = BinaryBuffer.newInstance(rawPacket.getBuffer().toArray().length + 1, ByteOrder.BIG_ENDIAN); //TODO: find a better way to do this
+        bb.putByte((byte) 0x8E); //Strange 0.14.0 update thing
+        bb.put(rawPacket.getBuffer().toArray());
+        packet.buffer = bb.toArray();
+
         if(!identifiers.containsKey(rawPacket.getAddress().toString())) {
             identifiers.put(rawPacket.getAddress().toString(), socketAddressToIdentifier(rawPacket.getAddress()));
         }

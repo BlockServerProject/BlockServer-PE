@@ -28,11 +28,11 @@ public class NetworkInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    public static final byte CURRENT_PROTOCOL = 38;
+    public static final byte CURRENT_PROTOCOL = 45;
     /**
-     * Minecraft: PE Version.
+     * Current Minecraft: PE version string
      */
-    public static final String CURRENT_VERSION = "0.13.1";
+    public static final String CURRENT_VERSION = "0.14.0";
     public static final byte LOGIN_PACKET = (byte) 0x8f;
     public static final byte PLAY_STATUS_PACKET = (byte) 0x90;
     public static final byte DISCONNECT_PACKET = (byte) 0x91;
@@ -80,12 +80,19 @@ public class NetworkInfo {
     public static final byte CRAFTING_EVENT_PACKET = (byte) 0xbb;
     public static final byte ADVENTURE_SETTINGS_PACKET = (byte) 0xbc;
     public static final byte BLOCK_ENTITY_DATA_PACKET = (byte) 0xbd;
-    //public static final byte PLAYER_INPUT_PACKET = (byte) 0xbe;
+    // public static final byte PLAYER_INPUT_PACKET = (byte) 0xbe;
     public static final byte FULL_CHUNK_DATA_PACKET = (byte) 0xbf;
     public static final byte SET_DIFFICULTY_PACKET = (byte) 0xc0;
-    //public static final byte CHANGE_DIMENSION_PACKET = (byte) 0xc1;
+    // public static final byte CHANGE_DIMENSION_PACKET = (byte) 0xc1;
     public static final byte SET_PLAYER_GAMETYPE_PACKET = (byte) 0xc2;
     public static final byte PLAYER_LIST_PACKET = (byte) 0xc3;
-    //public static final byte TELEMETRY_EVENT_PACKET = (byte) 0xc4;
-    //public static final byte SPAWN_EXPERIENCE_ORB_PACKET = (byte) 0xc5
+    // public static final byte TELEMETRY_EVENT_PACKET = (byte) 0xc4;
+    // public static final byte SPAWN_EXPERIENCE_ORB_PACKET = (byte) 0xc5
+    // public static final byte CLIENTBOUND_MAP_ITEM_DATA_PACKET = (byte) 0xc6;
+    // public static final byte MAP_INFO_REQUEST_PACKET = (byte) 0xc7;
+    // public static final byte REQUEST_CHUNK_RADIUS_PACKET = (byte) 0xc8;
+    // public static final byte CHUNK_RADIUS_UPDATE_PACKET = (byte) 0xc9;
+    // public static final byte ITEM_FRAME_DROP_ITEM_PACKET = (byte) 0xca;
+    // public static final byte REPLACE_SELECTED_ITEM_PACKET = (byte) 0xcb;
+
 }

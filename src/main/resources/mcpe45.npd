@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://jython234.github.io/JPacketLib https://raw.githubusercontent.com/jython234/JPacketLib/master/npd.xsd"
 
     name="MinecraftPEProtocol"
-    version="41">
+    version="45">
 
     <packet name="LOGIN_PACKET">
         <pid>8F</pid>

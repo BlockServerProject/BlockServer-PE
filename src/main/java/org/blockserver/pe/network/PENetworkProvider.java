@@ -31,7 +31,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -135,7 +134,7 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
         if(!identifiers.containsKey(rawPacket.getAddress().toString())) {
             identifiers.put(rawPacket.getAddress().toString(), socketAddressToIdentifier(rawPacket.getAddress()));
         }
-        handler.sendEncapsulated(identifiers.get(rawPacket.getAddress().toString()), packet, (byte) (0 | JRakLib.PRIORITY_NORMAL));
+        handler.sendEncapsulated(identifiers.get(rawPacket.getAddress().toString()), packet, (byte) (JRakLib.PRIORITY_NORMAL));
     }
 
     public static String socketAddressToIdentifier(SocketAddress address) {

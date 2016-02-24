@@ -87,18 +87,18 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
-        System.out.println("A New session has opened.");
+        getServer().getModule(LoggingModule.class).debug("("+identifier+"): Session OPENED {clientID: "+clientID+"}");
     }
 
     @Override
     public void closeSession(String identifier, String reason) {
-        //sessionClosed(identifierToSocketAddress(identifier));
+        getServer().getModule(LoggingModule.class).debug("("+identifier+"): Session CLOSED {reason: "+reason+"}");
     }
 
     @Override
     public void handleEncapsulated(String identifier, EncapsulatedPacket packet, int flags) {
         RawPacket pk = new RawPacket(BinaryBuffer.wrapBytes(Arrays.copyOfRange(packet.buffer, 1, packet.buffer.length), ByteOrder.BIG_ENDIAN), identifierToSocketAddress(identifier));
-        System.out.println("PACKET IN: "+pk.getBuffer().singleLineHexDump());
+        getServer().getModule(LoggingModule.class).debug("("+identifier+"): Packet IN {buffer: "+pk.getBuffer().singleLineHexDump()+"}");
         provide(pk);
     }
 
@@ -135,7 +135,9 @@ public class PENetworkProvider extends NetworkProvider implements ServerInstance
         if(!identifiers.containsKey(rawPacket.getAddress().toString())) {
             identifiers.put(rawPacket.getAddress().toString(), socketAddressToIdentifier(rawPacket.getAddress()));
         }
-        handler.sendEncapsulated(identifiers.get(rawPacket.getAddress().toString()), packet, (byte) (0 | JRakLib.PRIORITY_NORMAL));
+        String ident = identifiers.get(rawPacket.getAddress().toString());
+        getServer().getModule(LoggingModule.class).debug("("+ident+") Packet OUT: {buffer: "+rawPacket.getBuffer().singleLineHexDump()+"}");
+        handler.sendEncapsulated(ident, packet, (byte) (0 | JRakLib.PRIORITY_NORMAL));
     }
 
     public static String socketAddressToIdentifier(SocketAddress address) {

@@ -7,6 +7,9 @@
     name="MinecraftPEProtocol"
     version="45">
 
+    <const name="VERSION" type="string" value="0.14.0"/>
+    <const name="PROTOCOL" type="integer" value="45"/>
+
     <packet name="LOGIN_PACKET">
         <pid>8F</pid>
         <field name="username" type="str"/>
@@ -61,5 +64,23 @@
         <field name="y" type="float"/>
         <field name="z" type="float"/>
         <field name="unknown1" type="byte"/> <!-- 0 -->
+    </packet>
+    
+    <packet name="AddPlayerPacket">
+        <pid>96</pid>
+        <field name="uuid" type="bytes" length="16"/>
+        <field name="username" type="str"/>
+        <field name="eid" type="int64"/>
+        <field name="x" type="float"/>
+        <field name="y" type="float"/>
+        <field name="z" type="float"/>
+        <field name="speedX" type="float"/>
+        <field name="speedY" type="float"/>
+        <field name="speedZ" type="float"/>
+        <field name="yaw" type="float"/>
+        <field name="headYaw" type="float"/>
+        <field name="pitch" type="float"/>
+        <!--<field name="item" type="slot"/> TODO: Slot? -->
+        <field name="metadata" type="bytes"/> <!-- TODO: Length -->
     </packet>
 </protocol>
